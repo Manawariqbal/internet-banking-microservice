@@ -1,7 +1,25 @@
 spring:
   cloud:
     config:
-      enabled: false
+      enabled: false     # disable config server since you're not using it
+    gateway:
+      routes:
+        ## USER SERVICE
+        - id: internet-banking-user-service
+          uri: lb://internet-banking-user-service
+          predicates:
+            - Path=/user/**
+          filters:
+            - StripPrefix=1
+
+        ## FUND TRANSFER SERVICE
+        - id: internet-banking-fund-transfer-service
+          uri: lb://internet-banking-fund-transfer-service
+          predicates:
+            - Path=/fund-transfer/**
+          filters:
+            - StripPrefix=1
+
   application:
     name: internet-banking-api-gateway
 
@@ -10,7 +28,7 @@ server:
 
 eureka:
   client:
-    service-url:
-      defaultZone: http://localhost:8081/eureka
     register-with-eureka: true
     fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8081/eureka
